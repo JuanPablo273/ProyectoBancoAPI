@@ -137,6 +137,33 @@ namespace ProyectoBancoAPI.Controllers
 
                 if (datos != null)
                 {
+                    datos.IdUsuario = entidad.IdUsuario;
+                    datos.Nombre = entidad.Nombre;
+                    datos.Apellido = entidad.Apellido;
+                    datos.Correo = entidad.Correo;
+                    datos.Direccion = entidad.Direccion;
+                    datos.Telefono = entidad.Telefono;
+                   
+
+                    return bd.SaveChanges();
+                }
+
+                return 0;
+            }
+        }
+
+        [HttpPut]
+        [Route("api/CambiarDatos")]
+        public int CambiarDatos(UsuarioEnt entidad)
+        {
+            using (var bd = new ProyectoBancoEntities())
+            {
+                var datos = (from x in bd.Usuario
+                             where x.IdUsuario == entidad.IdUsuario
+                             select x).FirstOrDefault();
+
+                if (datos != null)
+                {
                     datos.Contrasenna = entidad.ContrasennaNueva;
                     datos.ClaveTemporal = false;
                     datos.Caducidad = DateTime.Now;
@@ -146,6 +173,10 @@ namespace ProyectoBancoAPI.Controllers
                 return 0;
             }
         }
+
+
+
+
 
         [HttpGet]
         [Route("api/ConsultaUsuarios")]
@@ -273,7 +304,11 @@ namespace ProyectoBancoAPI.Controllers
                 if (datos != null)
                 {
                     UsuarioEnt resp = new UsuarioEnt();
+                    resp.Apellido = datos.Apellido;
                     resp.Correo = datos.Correo;
+                    resp.Direccion = datos.Direccion;
+                    resp.Correo = datos.Correo;
+                    resp.Telefono = datos.Telefono;
                     resp.Nombre = datos.Nombre;
                     resp.Estado = datos.Estado;
                     resp.IdRole = datos.IdRole;
