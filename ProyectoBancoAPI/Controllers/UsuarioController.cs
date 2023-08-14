@@ -1,4 +1,5 @@
-﻿using ProyectoBancoAPI.Entities;
+﻿using ProyectoBancoAPI.App_Start;
+using ProyectoBancoAPI.Entities;
 using ProyectoBancoAPI.Models;
 using System;
 using System.Collections.Generic;
@@ -14,10 +15,17 @@ using System.Web.UI.WebControls;
 
 namespace ProyectoBancoAPI.Controllers
 {
+
+    [Authorize]
     public class UsuarioController : ApiController
     {
+
+        TokenGenerator tok = new TokenGenerator();
+
+
         [HttpPost]
         [Route("api/IniciarSesion")]
+        [AllowAnonymous]
         public UsuarioEnt IniciarSesion(UsuarioEnt entidad)
         {
             using (var bd = new ProyectoBancoEntities())
@@ -59,6 +67,7 @@ namespace ProyectoBancoAPI.Controllers
                     resp.IdRole = datos.IdRole;
                     resp.NombreRole = datos.NombreRole;
                     resp.IdUsuario = datos.IdUsuario;
+                    resp.Token = tok.GenerateTokenJwt(datos.IdUsuario);
                     return resp;
                 }
                 else
@@ -70,6 +79,7 @@ namespace ProyectoBancoAPI.Controllers
 
         [HttpPost]
         [Route("api/RegistrarUsuario")]
+        [AllowAnonymous]
         public int RegistrarUsuario(UsuarioEnt entidad)
         {
             using (var bd = new ProyectoBancoEntities())
@@ -96,6 +106,7 @@ namespace ProyectoBancoAPI.Controllers
 
         [HttpPost]
         [Route("api/RecuperarClave")]
+        [AllowAnonymous]
         public bool RecuperarClave(UsuarioEnt entidad)
         {
             UtilitariosModel util = new UtilitariosModel();
@@ -351,5 +362,34 @@ namespace ProyectoBancoAPI.Controllers
                 }
             }
         }
+
+
+
+
+
+        [HttpPut]
+        [Route("api/EditarUsuario")]
+        public int EditarUsuario(UsuarioEnt entidad)
+        {
+            using (var bd = new ProyectoBancoEntities())
+            {
+                var datos = (from x in bd.Usuario
+                             where x.IdUsuario == entidad.IdUsuario
+                             select x).FirstOrDefault();
+
+                if (datos != null)
+                {
+                    datos.Nombre = entidad.Nombre;
+                    datos.Apellido = entidad.Apellido;
+                    datos.Correo = entidad.Correo;
+                    datos.Direccion = entidad.Direccion;
+                    datos.Telefono = entidad.Telefono;
+                    return bd.SaveChanges();
+                }
+
+                return 0;
+            }
+        }
+
     }
 }

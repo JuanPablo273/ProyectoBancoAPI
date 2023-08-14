@@ -9,6 +9,8 @@ using System.Web.Http;
 
 namespace ProyectoBancoAPI.Controllers
 {
+
+    [Authorize]
     public class UtilitariosController
     {
 
