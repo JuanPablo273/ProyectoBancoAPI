@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProyectoBancoAPI.App_Start;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
@@ -10,7 +11,7 @@ namespace ProyectoBancoAPI
         public static void Register(HttpConfiguration config)
         {
             // Configuración y servicios de Web API
-
+            config.MessageHandlers.Add(new TokenValidationHandler());
 
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
